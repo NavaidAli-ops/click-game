@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neon Click Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      background: linear-gradient(270deg, #0f0c29, #302b63, #24243e);
+      background-size: 600% 600%;
+      animation: gradientBG 15s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    #circle {
+      width: 80px;
+      height: 80px;
+      background: #00ffcc;
+      border-radius: 50%;
+      position: absolute;
+      display: none;
+      cursor: pointer;
+      box-shadow: 0 0 20px #00ffcc, 0 0 40px #00ffcc;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.15);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    #scoreboard {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 10px 20px;
+      border-radius: 12px;
+      text-align: center;
+      position: absolute;
+      top: 20px;
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 12px 28px;
+      font-size: 18px;
+      background: #00ffcc;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00ffcc;
+      transition: transform 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: #00ddb3;
+    }
+
+    @media (max-width: 600px) {
+      #circle {
+        width: 60px;
+        height: 60px;
+      }
+
+      button {
+        font-size: 16px;
+        padding: 10px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="scoreboard">
+    <h2>Score: <span id="score">0</span></h2>
+    <h3>Time Left: <span id="timer">30</span>s</h3>
+  </div>
+
+  <div id="circle"></div>
+
+  <button id="startBtn">Start Game</button>
+
+  <script>
+    const circle = document.getElementById("circle");
+    const scoreDisplay = document.getElementById("score");
+    const timerDisplay = document.getElementById("timer");
+    const startBtn = document.getElementById("startBtn");
+
+    let score = 0;
+    let timeLeft = 30;
+    let gameActive = false;
+    let timerInterval;
+
+    function randomPosition() {
+      const maxX = window.innerWidth - 100;
+      const maxY = window.innerHeight - 100;
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+      circle.style.left = `${x}px`;
+      circle.style.top = `${y}px`;
+    }
+
+    function hitCircle() {
+      if (!gameActive) return;
+      score++;
+      scoreDisplay.textContent = score;
+      randomPosition();
+    }
+
+    function startGame() {
+      score = 0;
+      timeLeft = 30;
+      gameActive = true;
+      scoreDisplay.textContent = score;
+      timerDisplay.textContent = timeLeft;
+      startBtn.disabled = true;
+      circle.style.display = "block";
+      randomPosition();
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          gameActive = false;
+          circle.style.display = "none";
+          startBtn.disabled = false;
+          alert(`🔥 Time's up! Final Score: ${score}`);
+        }
+      }, 1000);
+    }
+
+    circle.addEventListener("click", hitCircle);
+    startBtn.addEventListener("click", startGame);
+  </script>
+</body>
+</html>
